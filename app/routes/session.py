@@ -12,7 +12,7 @@ bp = Blueprint('session', __name__, url_prefix='/user')
 @bp.route('/', methods=['POST'])
 def register_user():
     data = request.json
-
+    print(data)
     hashed_password = generate_password_hash(data['password'])
     new_user = User(
         username=data['username'],
@@ -46,10 +46,10 @@ def login_user():
 
 
 # TEST
-@bp.route('/')
-@token_required
-def check_auth(current_user):
-    return {'message': 'User is authorized!', 'user_id': current_user.id}
+# @bp.route('/')
+# @token_required
+# def check_auth(current_user):
+#     return {'message': 'User is authorized!', 'user_id': current_user.id}
 
 
 # @bp.route('/all')
