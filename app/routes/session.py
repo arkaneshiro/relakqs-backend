@@ -27,6 +27,9 @@ def register_user():
     return {
         'authToken': token.decode('UTF-8'),
         'currentUserId': new_user.id,
+        'username': new_user.username,
+        'aviUrl': new_user.avi_url,
+        'bio': new_user.bio,
         }
 
 
@@ -40,6 +43,9 @@ def login_user():
         return {
             'authToken': token.decode('UTF-8'),
             'currentUserId': user.id,
+            'username': user.username,
+            'aviUrl': user.avi_url,
+            'bio': user.bio,
             }
     else:
         return {'message': 'Invalid credentials'}, 401
