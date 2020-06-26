@@ -51,11 +51,16 @@ def login_user():
         return {'message': 'Invalid credentials'}, 401
 
 
-# TEST
-# @bp.route('/')
-# @token_required
-# def check_auth(current_user):
-#     return {'message': 'User is authorized!', 'user_id': current_user.id}
+# RELOAD
+@bp.route('/')
+@token_required
+def check_auth(current_user):
+    user = User.query.filter_by(id=current_user.id).first()
+    return {
+        'username': user.username,
+        'aviUrl': user.avi_url,
+        'bio': user.bio,
+    }
 
 
 # @bp.route('/all')
