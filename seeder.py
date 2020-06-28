@@ -52,7 +52,7 @@ with app.app_context():
         admin=user1,
         is_channel=True,
         title='#riki channel',
-        topic='this is the good channel',
+        topic='riki channel riki channel riki channel riki channel',
     )
 
     container3.members.append(user1)
