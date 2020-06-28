@@ -11,7 +11,6 @@ bp = Blueprint('channel', __name__, url_prefix='/channel')
 @token_required
 def get_channels(current_user):
     channels = Container.query.filter_by(is_channel=True).all()
-    print(channels)
     returnchannels = dict((channel.id, {
         'title': channel.title,
         'topic': channel.topic,

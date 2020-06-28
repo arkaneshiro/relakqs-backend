@@ -44,6 +44,10 @@ class User(db.Model):
     def password(self):
         return h_password
 
+    @property
+    def container_list(self):
+        return [container.id for container in self.containers]
+
     @password.setter
     def password(self, password):
         self.h_password = generate_password_hash(password)

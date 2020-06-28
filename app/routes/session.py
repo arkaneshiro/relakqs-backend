@@ -30,6 +30,7 @@ def register_user():
         'username': new_user.username,
         'aviUrl': new_user.avi_url,
         'bio': new_user.bio,
+        'containers': new_user.container_list,
         }
 
 
@@ -46,6 +47,8 @@ def login_user():
             'username': user.username,
             'aviUrl': user.avi_url,
             'bio': user.bio,
+            'containers': user.container_list,
+
             }
     else:
         return {'message': 'Invalid credentials'}, 401
@@ -60,6 +63,7 @@ def check_auth(current_user):
         'username': user.username,
         'aviUrl': user.avi_url,
         'bio': user.bio,
+        'containers': user.container_list,
     }
 
 

@@ -31,16 +31,35 @@ with app.app_context():
     container1 = Container(
         admin=user2,
         is_channel=True,
-        title='first channel',
+        title='#first channel',
         topic='this is the first channel',
     )
 
     container1.members.append(user2)
     container1.members.append(user1)
 
+    container2 = Container(
+        admin=user1,
+        is_channel=True,
+        title='#other channel',
+        topic='this is the good channel',
+    )
+
+    container2.members.append(user1)
+    container2.members.append(user2)
+
+    container3 = Container(
+        admin=user1,
+        is_channel=True,
+        title='#riki channel',
+        topic='this is the good channel',
+    )
+
+    container3.members.append(user1)
+
     db.session.add(user1)
     db.session.add(user2)
     db.session.add(container1)
+    db.session.add(container2)
+    db.session.add(container3)
     db.session.commit()
-
-    print(container1.user_list)
