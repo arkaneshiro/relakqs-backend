@@ -4,7 +4,7 @@ from flask_socketio import SocketIO, emit, send, join_room, leave_room
 from flask_cors import CORS
 from .config import Configuration
 from .routes import session, channel
-from .models import db, User, Container
+from .models import db, User, Container, Message
 import jwt
 
 
@@ -32,19 +32,54 @@ def join(data):
     room = container.id
     join_room(room)
     emit('message',
-         {'msg': f'{current_user.username} has entered the chat!'},
+         {'msg': {'message': f'--- {current_user.username}'
+                  ' has entered the chat! ---'
+                  }},
          broadcast=True,
          room=room
          )
 
 
-@socket.on('send_message')
-def message_sender(data):
+@socket.on('get_history')
+def get_history(data):
+    print('getting history')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
+    messages = Message.query.filter_by(container_id=data['channelId']).all()
+    msgs = {msg.id: {'message': msg.message,
+                     'username': msg.messager.username,
+                     'avi_url': msg.messager.avi_url,
+                     'bio': msg.messager.bio
+                     } for msg in messages}
+    print(msgs)
+    emit('history',
+         {'history': msgs,
+          'userId': current_user.id,
+          },
+         broadcast=True,
+         room=int(data['channelId'])
+         )
+
+
+@socket.on('message')
+def message_sender(data):
+    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    sender = User.query.filter_by(id=tokenObj['user_id']).first()
     message = data['message']
-    emit('message',
-         {'msg': f'{current_user.username} - {message}'},
+    new_msg = Message(
+        messager=sender,
+        container_id=data['channelId'],
+        message=message,
+    )
+    db.session.add(new_msg)
+    db.session.commit()
+    send({'msg': {'message': message,
+                  'messageId': new_msg.id,
+                  'userId': sender.id,
+                  'username': sender.username,
+                  'avi_url': sender.avi_url,
+                  'bio': sender.bio,
+                  }},
          broadcast=True,
          room=int(data['channelId'])
          )
@@ -56,7 +91,9 @@ def leave(data):
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     emit('message',
-         {'msg': f'{current_user.username} has left the chat!'},
+         {'msg': {'message': f'--- {current_user.username}'
+                  ' has left the chat! ---'
+                  }},
          broadcast=True,
          room=int(data['channelId'])
          )

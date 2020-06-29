@@ -39,6 +39,7 @@ class User(db.Model):
                                  secondary=container_users,
                                  back_populates="members"
                                  )
+    message = db.relationship("Message", back_populates="messager")
 
     @property
     def password(self):
@@ -72,7 +73,28 @@ class Container(db.Model):
                               secondary=container_users,
                               back_populates="containers"
                               )
+    message = db.relationship("Message", back_populates="container")
 
     @property
     def user_list(self):
         return [member.username for member in self.members]
+
+    @property
+    def msg_list(self):
+        return {msg.id: {'message': msg.message, 'timestamp': msg.created_on}
+                for msg in self.message
+                }
+
+
+class Message(db.Model):
+    __tablename__ = "messages"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    container_id = db.Column(db.Integer, db.ForeignKey("containers.id"))
+    message = db.Column(db.Text, nullable=False)
+    created_on = db.Column(db.DateTime, default=datetime.datetime.now(),
+                           nullable=False)
+
+    messager = db.relationship("User", back_populates="message")
+    container = db.relationship("Container", back_populates="message")

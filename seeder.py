@@ -6,7 +6,7 @@ load_dotenv()
 # so that the environment variables are
 # properly loaded.
 from app import app, db
-from app.models import User, Container
+from app.models import User, Container, Message
 
 
 with app.app_context():
@@ -19,19 +19,28 @@ with app.app_context():
         '6e1e42bfc60f89dde0a8cd8e1f6999c16d5473ac1ccc7b74906b2cb9dde76a38',
         email='riki@riki.com',
         bio='hi im riki',
+        avi_url='https://res.cloudinary.com/dgzcv1mcs/image/upload/v1592235884/b0emvohw3sgn7oz3vlkx.jpg'
     )
     user2 = User(
-        username='God',
+        username='Pikachu',
         h_password='pbkdf2:sha256:150000$RAQL3sNi$'
         '2f0e4093a24a192f1a3a112820a0957683972fecefc106f246ee5cc22172ecc8',
         email='god@riki.com',
         bio='hi !',
+        avi_url='https://res.cloudinary.com/dgzcv1mcs/image/upload/v1591979148/in1wgr6ehi2rdflpipah.png'
+    )
+    user3 = User(
+        username='Guest',
+        h_password='pbkdf2:sha256:150000$ltOXv3W8$'
+        '6e1e42bfc60f89dde0a8cd8e1f6999c16d5473ac1ccc7b74906b2cb9dde76a38',
+        email='guest@riki.com',
+        bio='hi I\'m a guest!',
     )
 
     container1 = Container(
         admin=user2,
         is_channel=True,
-        title='#first channel',
+        title='#first-channel',
         topic='this is the first channel',
     )
 
@@ -41,7 +50,7 @@ with app.app_context():
     container2 = Container(
         admin=user1,
         is_channel=True,
-        title='#other channel',
+        title='#other-channel',
         topic='this is the good channel',
     )
 
@@ -51,15 +60,37 @@ with app.app_context():
     container3 = Container(
         admin=user1,
         is_channel=True,
-        title='#riki channel',
+        title='#riki-channel',
         topic='riki channel riki channel riki channel riki channel',
     )
 
     container3.members.append(user1)
 
+    message1 = Message(
+        messager=user1,
+        container=container3,
+        message='riki channel riki channel',
+    )
+
+    message2 = Message(
+        messager=user1,
+        container=container3,
+        message='hi im riki',
+    )
+
+    message3 = Message(
+        messager=user1,
+        container=container3,
+        message='this is my channel',
+    )
+
     db.session.add(user1)
     db.session.add(user2)
+    db.session.add(user3)
     db.session.add(container1)
     db.session.add(container2)
     db.session.add(container3)
+    db.session.add(message1)
+    db.session.add(message2)
+    db.session.add(message3)
     db.session.commit()

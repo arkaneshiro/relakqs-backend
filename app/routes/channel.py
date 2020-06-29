@@ -18,3 +18,15 @@ def get_channels(current_user):
     return {
         'data': returnchannels
     }
+
+
+# JOIN CHANNEL
+@bp.route('/<id>', methods=['POST'])
+@token_required
+def join_channel(current_user, id):
+    channel = Container.query.filter_by(id=id).first()
+    channel.members.append(current_user)
+    db.session.commit()
+    return {
+        'data': current_user.container_list
+    }
