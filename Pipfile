@@ -17,6 +17,7 @@ alembic = "*"
 flask-migrate = "*"
 pyjwt = "*"
 flask-socketio = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
