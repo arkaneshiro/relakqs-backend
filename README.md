@@ -1,7 +1,7 @@
 # relakqs-backend
 backend for relakqs
 
-Check out relakqs here:
+Check out relakqs here: [relakqs](https://relakqs.herokuapp.com)
 
 Frontend for relakqs here: [relakqs](https://github.com/arkaneshiro/relakqs)
 
