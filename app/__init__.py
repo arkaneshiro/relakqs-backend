@@ -18,6 +18,11 @@ db.init_app(app)
 Migrate(app, db)
 
 
+@app.route('/')
+def hello_world():
+    return 'Hi!! ::)'
+
+
 @socket.on('connect')
 def test_connect():
     print('Client connected')
