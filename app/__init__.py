@@ -39,7 +39,8 @@ def join(data):
     emit('message',
          {'msg': {'message': f'--- {current_user.username}'
                   ' has entered the chat! ---'
-                  }},
+                  }
+          },
          broadcast=True,
          room=room
          )
@@ -84,7 +85,8 @@ def message_sender(data):
                   'username': sender.username,
                   'avi_url': sender.avi_url,
                   'bio': sender.bio,
-                  }},
+                  }
+          },
          broadcast=True,
          room=int(data['channelId'])
          )
@@ -98,7 +100,8 @@ def leave(data):
     emit('message',
          {'msg': {'message': f'--- {current_user.username}'
                   ' has left the chat! ---'
-                  }},
+                  }
+          },
          broadcast=True,
          room=int(data['channelId'])
          )
