@@ -14,6 +14,7 @@ def get_channels(current_user):
     returnchannels = dict((channel.id, {
         'title': channel.title,
         'topic': channel.topic,
+        'adminId': channel.admin_id,
     }) for channel in channels)
     return {
         'data': returnchannels
@@ -29,4 +30,16 @@ def join_channel(current_user, id):
     db.session.commit()
     return {
         'data': current_user.container_list
+    }
+
+
+# LEAVE CHANNEL
+@bp.route('/leave/<id>', methods=['DELETE'])
+@token_required
+def leave_channel(current_user, id):
+    channel = Container.query.filter_by(id=id).first()
+    channel.members.remove(current_user)
+    db.session.commit()
+    return {
+        'data': 'deleted!'
     }
