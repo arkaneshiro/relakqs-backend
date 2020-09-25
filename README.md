@@ -11,3 +11,11 @@ Frontend for relakqs here: [relakqs](https://github.com/arkaneshiro/relakqs)
 - [Front End Routes](https://github.com/arkaneshiro/relakqs/blob/master/Documentation/frontEndRoutes.md)
 - [Back End Routes](https://github.com/arkaneshiro/relakqs/blob/master/Documentation/backEndRoutes.md)
 - [Models](https://github.com/arkaneshiro/relakqs/blob/master/Documentation/models.md)
+
+## Instructions to run locally
+- clone repo
+- run command "npm install"
+
+- create database with some user, name, and password, enter appropriate info into .env file
+- run command 'pipenv shell', then 'python seeder.py' to seed database
+- while still in the pipenv shell, run command 'flask run' to start server
