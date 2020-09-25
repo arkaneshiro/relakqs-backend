@@ -41,5 +41,5 @@ def leave_channel(current_user, id):
     channel.members.remove(current_user)
     db.session.commit()
     return {
-        'data': 'deleted!'
+        'data': current_user.container_list
     }
