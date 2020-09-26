@@ -110,3 +110,9 @@ def leave(data):
 @socket.on('disconnect')
 def disconnect():
     print('Client disconnected')
+    emit('disconnect',
+         {'msg': {'message': '--- disconnected ---'
+                  }
+          },
+         broadcast=True,
+         )
