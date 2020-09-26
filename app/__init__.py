@@ -27,7 +27,7 @@ def hello_world():
 def test_connect():
     print('Client connected')
     emit('connected',
-         {'msg': {'message': '--- disconnected ---'
+         {'msg': {'message': '--- connected ---'
                   }
           },
          broadcast=True,
