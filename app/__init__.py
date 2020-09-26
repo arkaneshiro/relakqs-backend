@@ -26,6 +26,12 @@ def hello_world():
 @socket.on('connect')
 def test_connect():
     print('Client connected')
+    emit('connected',
+         {'msg': {'message': '--- disconnected ---'
+                  }
+          },
+         broadcast=True,
+         )
 
 
 @socket.on('join')
@@ -110,7 +116,7 @@ def leave(data):
 @socket.on('disconnect')
 def disconnect():
     print('Client disconnected')
-    emit('disconnect',
+    emit('disconnected',
          {'msg': {'message': '--- disconnected ---'
                   }
           },
