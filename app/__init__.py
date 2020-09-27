@@ -26,12 +26,6 @@ def hello_world():
 @socket.on('connect')
 def test_connect():
     print('Client connected')
-    emit('connected',
-         {'msg': {'message': '--- connected ---'
-                  }
-          },
-         broadcast=True,
-         )
 
 
 @socket.on('join')
@@ -42,9 +36,10 @@ def join(data):
     container = Container.query.filter_by(id=data['channelId']).first()
     room = container.id
     join_room(room)
+    print(f'{current_user.username} entered room {container.id}')
     emit('message',
          {'msg': {'message': f'--- {current_user.username}'
-                  ' has entered the chat! ---'
+                  f' has entered {container.title}! ---'
                   }
           },
          broadcast=True,
@@ -63,7 +58,6 @@ def get_history(data):
                      'avi_url': msg.messager.avi_url,
                      'bio': msg.messager.bio
                      } for msg in messages}
-    print(msgs)
     emit('history',
          {'history': msgs,
           'userId': current_user.id,
@@ -103,22 +97,19 @@ def leave(data):
     print('Client left')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
+    container = Container.query.filter_by(id=data['channelId']).first()
+    room = container.id
+    print(f'{current_user.username} left room {container.id}')
     emit('message',
          {'msg': {'message': f'--- {current_user.username}'
-                  ' has left the chat! ---'
+                  f' has left {container.title}! ---'
                   }
           },
          broadcast=True,
-         room=int(data['channelId'])
+         room=room
          )
 
 
 @socket.on('disconnect')
 def disconnect():
     print('Client disconnected')
-    emit('disconnected',
-         {'msg': {'message': '--- disconnected ---'
-                  }
-          },
-         broadcast=True,
-         )
