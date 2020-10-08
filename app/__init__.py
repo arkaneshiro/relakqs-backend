@@ -94,10 +94,6 @@ def message_sender(data):
 
 @socket.on('change_topic')
 def change_topic(data):
-    # print('tried to change topic')
-    # Todo: learn validation/middlewares with socket.io, require authToken
-    # Todo: learn difference between 'emit' and 'send' OOOPS
-    # Todo: emit message that says the admin changed the channel
     channel = Container.query.filter_by(id=data['channelId']).first()
     channel.topic = data['newTopic']
     db.session.commit()
