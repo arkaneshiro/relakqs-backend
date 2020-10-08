@@ -94,8 +94,11 @@ def message_sender(data):
 
 @socket.on('change_topic')
 def change_topic(data):
+    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     channel = Container.query.filter_by(id=data['channelId']).first()
-    channel.topic = data['newTopic']
+    new_topic = data['newTopic']
+    channel.topic = new_topic
     db.session.commit()
     channels = Container.query.filter_by(is_channel=True).all()
     returnchannels = dict((c.id, {
@@ -103,10 +106,14 @@ def change_topic(data):
         'topic': c.topic,
         'adminId': c.admin_id,
     }) for c in channels)
+    room = int(data['channelId'])
     emit('new_topic',
-         {'channels': returnchannels},
+         {'channels': returnchannels,
+          'update_msg':  f'--- channel admin {current_user.username}'
+          f' has changed the topic to "{new_topic}" ---'
+          },
          broadcast=True,
-         room=int(data['channelId'])
+         room=room
          )
 
 
