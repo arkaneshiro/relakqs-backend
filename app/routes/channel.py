@@ -48,7 +48,7 @@ def leave_channel(current_user, id):
 # EDIT TOPIC
 @bp.route('/editTopic/<id>', methods=['PUT'])
 @token_required
-def edit_channel_topic(current_use, id):
+def edit_channel_topic(current_user, id):
     data = request.json
     channel = Container.query.filter_by(id=id).first()
     channel.topic = data['topic']
