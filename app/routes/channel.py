@@ -43,22 +43,3 @@ def leave_channel(current_user, id):
     return {
         'data': current_user.container_list
     }
-
-
-# EDIT TOPIC
-@bp.route('/editTopic/<id>', methods=['PUT'])
-@token_required
-def edit_channel_topic(current_user, id):
-    data = request.json
-    channel = Container.query.filter_by(id=id).first()
-    channel.topic = data['topic']
-    db.session.commit()
-    channels = Container.query.filter_by(is_channel=True).all()
-    returnchannels = dict((c.id, {
-        'title': c.title,
-        'topic': c.topic,
-        'adminId': c.admin_id,
-    }) for c in channels)
-    return {
-        'data': returnchannels
-    }
