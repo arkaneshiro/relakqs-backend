@@ -30,13 +30,13 @@ def test_connect():
 
 @socket.on('join')
 def join(data):
-    print('Client joined')
+    # print('Client joined')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     container = Container.query.filter_by(id=data['channelId']).first()
     room = container.id
     join_room(room)
-    print(f'{current_user.username} entered room {container.id}')
+    # print(f'{current_user.username} entered room {container.id}')
     emit('message',
          {'msg': {'message': f'--- {current_user.username}'
                   f' has entered {container.title}! ---'
@@ -49,7 +49,7 @@ def join(data):
 
 @socket.on('get_history')
 def get_history(data):
-    print('getting history')
+    # print('getting history')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     messages = Message.query.filter_by(container_id=data['channelId']).all()
@@ -58,12 +58,13 @@ def get_history(data):
                      'avi_url': msg.messager.avi_url,
                      'bio': msg.messager.bio
                      } for msg in messages}
+    room = int(data['channelId'])
     emit('history',
          {'history': msgs,
           'userId': current_user.id,
           },
          broadcast=True,
-         room=int(data['channelId'])
+         room=room
          )
 
 
@@ -79,6 +80,7 @@ def message_sender(data):
     )
     db.session.add(new_msg)
     db.session.commit()
+    room = int(data['channelId'])
     send({'msg': {'message': message,
                   'messageId': new_msg.id,
                   'userId': sender.id,
@@ -88,7 +90,7 @@ def message_sender(data):
                   }
           },
          broadcast=True,
-         room=int(data['channelId'])
+         room=room
          )
 
 
@@ -98,8 +100,7 @@ def change_topic(data):
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     channel = Container.query.filter_by(id=data['channelId']).first()
     if channel.admin == current_user:
-        new_topic = data['newTopic']
-        channel.topic = new_topic
+        channel.topic = data['newTopic']
         db.session.commit()
     channels = Container.query.filter_by(is_channel=True).all()
     returnchannels = dict((c.id, {
@@ -120,12 +121,12 @@ def change_topic(data):
 
 @socket.on('leave')
 def leave(data):
-    print('Client left')
+    # print('Client left')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     container = Container.query.filter_by(id=data['channelId']).first()
     room = container.id
-    print(f'{current_user.username} left room {container.id}')
+    # print(f'{current_user.username} left room {container.id}')
     emit('message',
          {'msg': {'message': f'--- {current_user.username}'
                   f' has left {container.title}! ---'
