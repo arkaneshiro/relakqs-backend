@@ -97,9 +97,10 @@ def change_topic(data):
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     channel = Container.query.filter_by(id=data['channelId']).first()
-    new_topic = data['newTopic']
-    channel.topic = new_topic
-    db.session.commit()
+    if channel.admin == current_user:
+        new_topic = data['newTopic']
+        channel.topic = new_topic
+        db.session.commit()
     channels = Container.query.filter_by(is_channel=True).all()
     returnchannels = dict((c.id, {
         'title': c.title,
@@ -110,7 +111,7 @@ def change_topic(data):
     emit('new_topic',
          {'channels': returnchannels,
           'update_msg':  f'--- channel admin {current_user.username}'
-          f' has changed the topic to "{new_topic}" ---'
+          f' has changed the topic to "{channel.topic}" ---'
           },
          broadcast=True,
          room=room
