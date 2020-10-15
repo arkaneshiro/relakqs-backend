@@ -15,6 +15,7 @@ def get_channels(current_user):
         'title': channel.title,
         'topic': channel.topic,
         'adminId': channel.admin_id,
+        'users': channel.user_list,
     }) for channel in channels)
     return {
         'data': returnchannels

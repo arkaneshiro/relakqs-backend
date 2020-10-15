@@ -77,11 +77,19 @@ class Container(db.Model):
 
     @property
     def user_list(self):
-        return [member.username for member in self.members]
+        return {member.id: {
+                'username': member.username,
+                'avi': member.avi_url
+                }
+                for member in self.members
+                }
 
     @property
     def msg_list(self):
-        return {msg.id: {'message': msg.message, 'timestamp': msg.created_on}
+        return {msg.id: {
+                'message': msg.message,
+                'timestamp': msg.created_on
+                }
                 for msg in self.message
                 }
 
