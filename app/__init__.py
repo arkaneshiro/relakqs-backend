@@ -38,9 +38,33 @@ def join(data):
     join_room(room)
     # print(f'{current_user.username} entered room {container.id}')
     emit('message',
-         {'msg': {'message': f'--- {current_user.username}'
+         {'msg': {'message': f' --- {current_user.username}'
                   f' has entered {container.title}! ---'
                   }
+          },
+         broadcast=True,
+         room=room
+         )
+
+
+@socket.on('join_channel')
+def join_channel(data):
+    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    current_user = User.query.filter_by(id=tokenObj['user_id']).first()
+    channel = Container.query.filter_by(id=data['channelId']).first()
+    channel.members.append(current_user)
+    db.session.commit()
+    room = channel.id
+    channels = Container.query.filter_by(is_channel=True).all()
+    returnchannels = dict((c.id, {
+        'title': c.title,
+        'topic': c.topic,
+        'adminId': c.admin_id,
+        'users': c.user_list,
+    }) for c in channels)
+    emit('new_member',
+         {'channels': returnchannels,
+          'containers': current_user.container_list,
           },
          broadcast=True,
          room=room
@@ -107,11 +131,12 @@ def change_topic(data):
         'title': c.title,
         'topic': c.topic,
         'adminId': c.admin_id,
+        'users': c.user_list,
     }) for c in channels)
     room = int(data['channelId'])
     emit('new_topic',
          {'channels': returnchannels,
-          'update_msg':  f'--- channel admin {current_user.username}'
+          'update_msg':  f' --- channel admin {current_user.username}'
           f' has changed the topic to "{channel.topic}" ---'
           },
          broadcast=True,
@@ -128,7 +153,7 @@ def leave(data):
     room = container.id
     # print(f'{current_user.username} left room {container.id}')
     emit('message',
-         {'msg': {'message': f'--- {current_user.username}'
+         {'msg': {'message': f' --- {current_user.username}'
                   f' has left {container.title}! ---'
                   }
           },
