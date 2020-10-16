@@ -65,14 +65,3 @@ def check_auth(current_user):
         'bio': user.bio,
         'containers': user.container_list,
     }
-
-
-# @bp.route('/all')
-# @token_required
-# def get_all_users(current_user):
-#     users = User.query.all()
-
-#     users = {user.id: {'username': user.username, 'email': user.email}
-#              for user in users}
-
-#     return {'data': users}

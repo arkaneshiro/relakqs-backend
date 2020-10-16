@@ -65,6 +65,32 @@ def join_channel(data):
     emit('new_member',
          {'channels': returnchannels,
           'containers': current_user.container_list,
+          'new_member_id': current_user.id,
+          },
+         broadcast=True,
+         room=room
+         )
+
+
+@socket.on('leave_channel')
+def leave_channel(data):
+    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    current_user = User.query.filter_by(id=tokenObj['user_id']).first()
+    channel = Container.query.filter_by(id=data['channelId']).first()
+    channel.members.remove(current_user)
+    db.session.commit()
+    room = channel.id
+    channels = Container.query.filter_by(is_channel=True).all()
+    returnchannels = dict((c.id, {
+        'title': c.title,
+        'topic': c.topic,
+        'adminId': c.admin_id,
+        'users': c.user_list,
+    }) for c in channels)
+    emit('member_left',
+         {'channels': returnchannels,
+          'containers': current_user.container_list,
+          'old_member_id': current_user.id,
           },
          broadcast=True,
          room=room
