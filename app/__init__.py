@@ -4,7 +4,7 @@ from flask_socketio import SocketIO, emit, send, join_room, leave_room
 from flask_cors import CORS
 from .config import Configuration
 from .routes import session, channel
-from .models import db, User, Container, Message
+from .models import *
 import jwt
 
 
@@ -28,6 +28,11 @@ def test_connect():
     print('Client connected')
 
 
+@socket.on('disconnect')
+def disconnect():
+    print('Client disconnected')
+
+
 @socket.on('join')
 def join(data):
     # print('Client joined')
@@ -47,8 +52,28 @@ def join(data):
          )
 
 
+@socket.on('leave')
+def leave(data):
+    # print('Client left')
+    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    current_user = User.query.filter_by(id=tokenObj['user_id']).first()
+    container = Container.query.filter_by(id=data['channelId']).first()
+    room = container.id
+    leave_room(room)
+    # print(f'{current_user.username} left room {container.id}')
+    emit('message',
+         {'msg': {'message': f' --- {current_user.username}'
+                  f' has left {container.title}! ---'
+                  }
+          },
+         broadcast=True,
+         room=room
+         )
+
+
 @socket.on('join_channel')
 def join_channel(data):
+    # print('adding new member to channel')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     channel = Container.query.filter_by(id=data['channelId']).first()
@@ -120,6 +145,7 @@ def get_history(data):
 
 @socket.on('message')
 def message_sender(data):
+    # print('u tried to send message')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     sender = User.query.filter_by(id=tokenObj['user_id']).first()
     message = data['message']
@@ -168,26 +194,3 @@ def change_topic(data):
          broadcast=True,
          room=room
          )
-
-
-@socket.on('leave')
-def leave(data):
-    # print('Client left')
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
-    current_user = User.query.filter_by(id=tokenObj['user_id']).first()
-    container = Container.query.filter_by(id=data['channelId']).first()
-    room = container.id
-    # print(f'{current_user.username} left room {container.id}')
-    emit('message',
-         {'msg': {'message': f' --- {current_user.username}'
-                  f' has left {container.title}! ---'
-                  }
-          },
-         broadcast=True,
-         room=room
-         )
-
-
-@socket.on('disconnect')
-def disconnect():
-    print('Client disconnected')
