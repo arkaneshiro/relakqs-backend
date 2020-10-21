@@ -63,7 +63,7 @@ class Container(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     admin_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     is_channel = db.Column(db.Boolean, nullable=False)
-    title = db.Column(db.String(25), nullable=False)
+    title = db.Column(db.String(25), unique=True, nullable=False)
     topic = db.Column(db.Text)
     created_on = db.Column(db.DateTime, default=datetime.datetime.now(),
                            nullable=False)

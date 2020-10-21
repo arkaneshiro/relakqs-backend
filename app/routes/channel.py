@@ -20,3 +20,31 @@ def get_channels(current_user):
     return {
         'data': returnchannels
     }
+
+
+# CREATE CHANNEL
+@bp.route('/', methods=['POST'])
+@token_required
+def create_channel(current_user):
+    data = request.json
+    title = data['title']
+    new_channel = Container(
+        admin=current_user,
+        is_channel=True,
+        title=f'#{title}',
+        topic=data['topic'],
+    )
+    new_channel.members.append(current_user)
+    db.session.add(new_channel)
+    db.session.commit()
+    channels = Container.query.filter_by(is_channel=True).all()
+    returnchannels = dict((c.id, {
+        'title': c.title,
+        'topic': c.topic,
+        'adminId': c.admin_id,
+        'users': c.user_list
+    }) for c in channels)
+    return {
+        'channels': returnchannels,
+        'newChannelId': new_channel.id
+    }
