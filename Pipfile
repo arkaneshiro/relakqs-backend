@@ -18,6 +18,7 @@ flask-migrate = "*"
 pyjwt = "*"
 flask-socketio = "*"
 gunicorn = "*"
+eventlet = "*"
 
 [requires]
 python_version = "3.8"
