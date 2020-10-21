@@ -19,4 +19,4 @@ Frontend for relakqs here: [relakqs](https://github.com/arkaneshiro/relakqs)
 - create database with some user, name, and password, enter appropriate info into .env file
 - run command 'pipenv shell', then 'python seeder.py' to seed database
 - make sure "socket.run(app, debug=True)" is uncommented in relakqs.py
-- while still in the pipenv shell, run command 'python relakqs.py' to start server
+- while still in the pipenv shell, run command 'flask run' to start server
