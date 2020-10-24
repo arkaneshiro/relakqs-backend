@@ -46,6 +46,7 @@ with app.app_context():
 
     container1.members.append(user2)
     container1.members.append(user1)
+    container1.members.append(user3)
 
     container2 = Container(
         admin=user1,
@@ -82,6 +83,12 @@ with app.app_context():
         messager=user1,
         container=container3,
         message='this is my channel',
+    )
+
+    message4 = Message(
+        messager=user1,
+        container=container1,
+        message='Hi! welcome to the first channel!'
     )
 
     db.session.add(user1)
