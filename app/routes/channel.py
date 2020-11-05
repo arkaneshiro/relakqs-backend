@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from app.models import User, Container, db
 from ..config import Configuration
 from ..util import token_required
@@ -61,12 +61,5 @@ def delete_channel(current_user):
     db.session.delete(channel)
     db.session.commit()
     channels = Container.query.filter_by(is_channel=True).all()
-    returnchannels = dict((c.id, {
-        'title': c.title,
-        'topic': c.topic,
-        'adminId': c.admin_id,
-        'users': c.user_list
-    }) for c in channels)
-    return {
-        'channels': returnchannels,
-    }
+    res = jsonify(success=True)
+    return res
