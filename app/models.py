@@ -73,7 +73,8 @@ class Container(db.Model):
                               secondary=container_users,
                               back_populates="containers"
                               )
-    message = db.relationship("Message", back_populates="container")
+    message = db.relationship("Message", back_populates="container",
+                              cascade="all, delete-orphan")
 
     @property
     def user_list(self):

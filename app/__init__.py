@@ -58,17 +58,18 @@ def leave(data):
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     container = Container.query.filter_by(id=data['channelId']).first()
-    room = container.id
+    room = int(data['channelId'])
     leave_room(room)
     # print(f'{current_user.username} left room {container.id}')
-    emit('message',
-         {'msg': {'message': f' --- {current_user.username}'
-                  f' has left {container.title}! ---'
-                  }
-          },
-         broadcast=True,
-         room=room
-         )
+    if container:
+        emit('message',
+             {'msg': {'message': f' --- {current_user.username}'
+                      f' has left {container.title}! ---'
+                      }
+              },
+             broadcast=True,
+             room=room
+             )
 
 
 @socket.on('join_channel')
