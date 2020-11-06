@@ -195,3 +195,18 @@ def change_topic(data):
          broadcast=True,
          room=room
          )
+
+
+@socket.on('delete_channel')
+def delete_channel(data):
+    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    current_user = User.query.filter_by(id=tokenObj['user_id']).first()
+    channel = Container.query.filter_by(id=data['channelId']).first()
+    if channel.admin == current_user:
+        db.session.delete(channel)
+        db.session.commit()
+        room = int(data['channelId'])
+        emit('channel_deleted',
+             broadcast=True,
+             room=room
+             )

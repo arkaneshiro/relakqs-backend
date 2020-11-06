@@ -53,7 +53,7 @@ def create_channel(current_user):
 # DELETE CHANNEL
 @bp.route('/delete', methods=['POST'])
 @token_required
-def delete_channel(current_user):
+def delete_(current_user):
     data = request.json
     channel = Container.query.filter_by(id=data['channelId']).first()
     if channel.admin != current_user:
