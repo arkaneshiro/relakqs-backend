@@ -48,18 +48,3 @@ def create_channel(current_user):
         'channels': returnchannels,
         'newChannelId': new_channel.id
     }
-
-
-# DELETE CHANNEL
-@bp.route('/delete', methods=['POST'])
-@token_required
-def delete_(current_user):
-    data = request.json
-    channel = Container.query.filter_by(id=data['channelId']).first()
-    if channel.admin != current_user:
-        return {'message': 'not authorized to delete'}, 401
-    db.session.delete(channel)
-    db.session.commit()
-    channels = Container.query.filter_by(is_channel=True).all()
-    res = jsonify(success=True)
-    return res
