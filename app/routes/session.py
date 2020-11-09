@@ -53,6 +53,36 @@ def login_user():
         return {'message': 'Invalid credentials'}, 401
 
 
+@bp.route('/update', methods=['POST'])
+@token_required
+def update_user(current_user):
+    data = request.json
+    user = User.query.filter_by(id=current_user.id).first()
+    if not data['bio']:
+        print('no new bio')
+        user.avi_url = data['aviUrl']
+        db.session.commit()
+        return {
+            'aviUrl': user.avi_url
+        }
+    elif not data['aviUrl']:
+        print('no new avi')
+        user.bio = data['bio']
+        db.session.commit()
+        return {
+            'bio': user.bio
+        }
+    else:
+        print('new avi and bio')
+        user.bio = data['bio']
+        user.avi_url = data['aviUrl']
+        db.session.commit()
+        return {
+            'bio': user.bio,
+            'aviUrl': user.avi_url
+        }
+
+
 # RELOAD
 @bp.route('/')
 @token_required
