@@ -171,15 +171,30 @@ def message_sender(data):
          )
 
 
-@socket.on('typing')
+@socket.on('typingOn')
 def began_typing(data):
+    print('began typing')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     sender = User.query.filter_by(id=tokenObj['user_id']).first()
-    typing = data['isTyping']
     room = int(data['channelId'])
     emit('typing',
          {'typingUser': {'userId': sender.id,
-                         'isTyping': typing,
+                         'isTyping': True,
+                         }},
+         broadcast=True,
+         room=room
+         )
+
+
+@socket.on('typingOff')
+def began_typing(data):
+    print('stopped typing')
+    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    sender = User.query.filter_by(id=tokenObj['user_id']).first()
+    room = int(data['channelId'])
+    emit('typing',
+         {'typingUser': {'userId': sender.id,
+                         'isTyping': False,
                          }},
          broadcast=True,
          room=room
