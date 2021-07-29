@@ -38,6 +38,8 @@ def register_user():
 def login_user():
     data = request.json
     user = User.query.filter_by(username=data['username']).first()
+    if not user:
+        return {'message': 'Invalid username'}, 401
     if user.check_password(data['password']):
         token = jwt.encode({'user_id': user.id}, Configuration.SECRET_KEY)
         return {
@@ -50,7 +52,7 @@ def login_user():
 
             }
     else:
-        return {'message': 'Invalid credentials'}, 401
+        return {'message': 'Invalid password'}, 401
 
 
 @bp.route('/update', methods=['POST'])
