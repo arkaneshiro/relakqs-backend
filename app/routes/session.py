@@ -39,7 +39,7 @@ def login_user():
     data = request.json
     user = User.query.filter_by(username=data['username']).first()
     if not user:
-        return {'message': 'Invalid username'}, 401
+        return {'message': 'Invalid username or password'}, 401
     if user.check_password(data['password']):
         token = jwt.encode({'user_id': user.id}, Configuration.SECRET_KEY)
         return {
