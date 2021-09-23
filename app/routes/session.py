@@ -12,6 +12,12 @@ bp = Blueprint('session', __name__, url_prefix='/user')
 @bp.route('/', methods=['POST'])
 def register_user():
     data = request.json
+    user_by_username = User.query.filter_by(username=data['username']).first()
+    user_by_email = User.query.filter_by(email=data['email']).first()
+    if user_by_username:
+        return {'message': 'Username already in use'}, 403
+    elif user_by_email:
+        return {'message': 'Email already in use'}, 403
     hashed_password = generate_password_hash(data['password'])
     new_user = User(
         username=data['username'],
