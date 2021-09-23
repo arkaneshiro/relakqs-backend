@@ -18,9 +18,9 @@ db.init_app(app)
 Migrate(app, db)
 
 
-@app.route('/')
-def hello_world():
-    return 'Hi!! ::)'
+# @app.route('/')
+# def hello_world():
+#     return 'Hi!! ::)'
 
 
 @socket.on('connect')
@@ -35,13 +35,11 @@ def disconnect():
 
 @socket.on('join')
 def join(data):
-    # print('Client joined')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     container = Container.query.filter_by(id=data['channelId']).first()
     room = container.id
     join_room(room)
-    # print(f'{current_user.username} entered room {container.id}')
     emit('message',
          {'msg': {'message': f' --- {current_user.username}'
                   f' has entered {container.title}! ---'
@@ -54,13 +52,11 @@ def join(data):
 
 @socket.on('leave')
 def leave(data):
-    # print('Client left')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     container = Container.query.filter_by(id=data['channelId']).first()
     room = int(data['channelId'])
     leave_room(room)
-    # print(f'{current_user.username} left room {container.id}')
     if container:
         emit('message',
              {'msg': {'message': f' --- {current_user.username}'
@@ -74,7 +70,7 @@ def leave(data):
 
 @socket.on('join_channel')
 def join_channel(data):
-    # print('adding new member to channel')
+    print('YOU JOINED A CHANNEL')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     channel = Container.query.filter_by(id=data['channelId']).first()
@@ -100,6 +96,7 @@ def join_channel(data):
 
 @socket.on('leave_channel')
 def leave_channel(data):
+    print('YOU LEFT A CHANNEL')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     channel = Container.query.filter_by(id=data['channelId']).first()
@@ -125,7 +122,6 @@ def leave_channel(data):
 
 @socket.on('get_history')
 def get_history(data):
-    # print('getting history')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     messages = Message.query.filter_by(container_id=data['channelId']).all()
@@ -146,7 +142,6 @@ def get_history(data):
 
 @socket.on('message')
 def message_sender(data):
-    # print('u tried to send message')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     sender = User.query.filter_by(id=tokenObj['user_id']).first()
     message = data['message']
@@ -173,7 +168,6 @@ def message_sender(data):
 
 @socket.on('typingOn')
 def began_typing(data):
-    print('began typing')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     sender = User.query.filter_by(id=tokenObj['user_id']).first()
     room = int(data['channelId'])
@@ -188,7 +182,6 @@ def began_typing(data):
 
 @socket.on('typingOff')
 def began_typing(data):
-    print('stopped typing')
     tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
     sender = User.query.filter_by(id=tokenObj['user_id']).first()
     room = int(data['channelId'])
