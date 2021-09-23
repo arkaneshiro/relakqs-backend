@@ -28,9 +28,13 @@ def register_user():
     db.session.add(new_user)
     db.session.commit()
 
-    token = jwt.encode({'user_id': new_user.id}, Configuration.SECRET_KEY)
+    token = jwt.encode(
+        {'user_id': new_user.id},
+        Configuration.SECRET_KEY,
+        algorithm="HS256")
+
     return {
-        'authToken': token.decode('UTF-8'),
+        'authToken': token,
         'currentUserId': new_user.id,
         'username': new_user.username,
         'aviUrl': new_user.avi_url,
@@ -47,9 +51,12 @@ def login_user():
     if not user:
         return {'message': 'Invalid username or password'}, 401
     if user.check_password(data['password']):
-        token = jwt.encode({'user_id': user.id}, Configuration.SECRET_KEY)
+        token = jwt.encode(
+            {'user_id': user.id},
+            Configuration.SECRET_KEY,
+            algorithm="HS256")
         return {
-            'authToken': token.decode('UTF-8'),
+            'authToken': token,
             'currentUserId': user.id,
             'username': user.username,
             'aviUrl': user.avi_url,

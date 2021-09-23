@@ -30,7 +30,7 @@ class User(db.Model):
                         "bw2djxdddpa1mjpshity.jpg"
                         )
     username = db.Column(db.String(20), unique=True, nullable=False)
-    h_password = db.Column(db.String(100), nullable=False)
+    h_password = db.Column(db.String(1000), nullable=False)
     email = db.Column(db.String(50), unique=True, nullable=False)
     bio = db.Column(db.String(100), default="", nullable=False)
 
@@ -43,7 +43,7 @@ class User(db.Model):
 
     @property
     def password(self):
-        return h_password
+        return self.h_password
 
     @property
     def container_list(self):

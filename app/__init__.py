@@ -35,7 +35,10 @@ def disconnect():
 
 @socket.on('join')
 def join(data):
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    tokenObj = jwt.decode(
+                          data['authToken'],
+                          Configuration.SECRET_KEY,
+                          algorithms="HS256")
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     container = Container.query.filter_by(id=data['channelId']).first()
     room = container.id
@@ -52,7 +55,10 @@ def join(data):
 
 @socket.on('leave')
 def leave(data):
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    tokenObj = jwt.decode(
+                          data['authToken'],
+                          Configuration.SECRET_KEY,
+                          algorithms="HS256")
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     container = Container.query.filter_by(id=data['channelId']).first()
     room = int(data['channelId'])
@@ -70,8 +76,10 @@ def leave(data):
 
 @socket.on('join_channel')
 def join_channel(data):
-    print('YOU JOINED A CHANNEL')
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    tokenObj = jwt.decode(
+                          data['authToken'],
+                          Configuration.SECRET_KEY,
+                          algorithms="HS256")
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     channel = Container.query.filter_by(id=data['channelId']).first()
     channel.members.append(current_user)
@@ -96,8 +104,10 @@ def join_channel(data):
 
 @socket.on('leave_channel')
 def leave_channel(data):
-    print('YOU LEFT A CHANNEL')
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    tokenObj = jwt.decode(
+                          data['authToken'],
+                          Configuration.SECRET_KEY,
+                          algorithms="HS256")
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     channel = Container.query.filter_by(id=data['channelId']).first()
     channel.members.remove(current_user)
@@ -122,7 +132,10 @@ def leave_channel(data):
 
 @socket.on('get_history')
 def get_history(data):
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    tokenObj = jwt.decode(
+                          data['authToken'],
+                          Configuration.SECRET_KEY,
+                          algorithms="HS256")
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     messages = Message.query.filter_by(container_id=data['channelId']).all()
     msgs = {msg.id: {'message': msg.message,
@@ -142,7 +155,10 @@ def get_history(data):
 
 @socket.on('message')
 def message_sender(data):
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    tokenObj = jwt.decode(
+                          data['authToken'],
+                          Configuration.SECRET_KEY,
+                          algorithms="HS256")
     sender = User.query.filter_by(id=tokenObj['user_id']).first()
     message = data['message']
     new_msg = Message(
@@ -168,7 +184,10 @@ def message_sender(data):
 
 @socket.on('typingOn')
 def began_typing(data):
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    tokenObj = jwt.decode(
+                          data['authToken'],
+                          Configuration.SECRET_KEY,
+                          algorithms="HS256")
     sender = User.query.filter_by(id=tokenObj['user_id']).first()
     room = int(data['channelId'])
     emit('typing',
@@ -182,7 +201,10 @@ def began_typing(data):
 
 @socket.on('typingOff')
 def began_typing(data):
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    tokenObj = jwt.decode(
+                          data['authToken'],
+                          Configuration.SECRET_KEY,
+                          algorithms="HS256")
     sender = User.query.filter_by(id=tokenObj['user_id']).first()
     room = int(data['channelId'])
     emit('typing',
@@ -196,7 +218,10 @@ def began_typing(data):
 
 @socket.on('change_topic')
 def change_topic(data):
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    tokenObj = jwt.decode(
+                          data['authToken'],
+                          Configuration.SECRET_KEY,
+                          algorithms="HS256")
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     channel = Container.query.filter_by(id=data['channelId']).first()
     if channel.admin == current_user:
@@ -222,7 +247,10 @@ def change_topic(data):
 
 @socket.on('delete_channel')
 def delete_channel(data):
-    tokenObj = jwt.decode(data['authToken'], Configuration.SECRET_KEY)
+    tokenObj = jwt.decode(
+                          data['authToken'],
+                          Configuration.SECRET_KEY,
+                          algorithms="HS256")
     current_user = User.query.filter_by(id=tokenObj['user_id']).first()
     channel = Container.query.filter_by(id=data['channelId']).first()
     if channel.admin == current_user:

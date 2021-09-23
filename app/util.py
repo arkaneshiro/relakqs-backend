@@ -14,9 +14,12 @@ def token_required(f):
         if not token:
             return {'message': 'a valid token is missing'}
         try:
-            data = jwt.decode(token, Configuration.SECRET_KEY)
+            data = jwt.decode(
+                token,
+                Configuration.SECRET_KEY,
+                algorithms="HS256")
             current_user = User.query.filter_by(id=data['user_id']).first()
-        except Exception:
+        except Exception as e:
             return {'message': 'token is invalid'}, 401
         return f(current_user, *args, **kwargs)
     return decorator
